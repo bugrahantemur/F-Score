@@ -23,7 +23,7 @@ jobs:
         - name: Check formatting with black
           uses: psf/black@stable
           with:
-            src: "src/ tests/"
+            src: ". tests/"
             options: "--check --verbose"
         - name: Run unit tests
           run: |
