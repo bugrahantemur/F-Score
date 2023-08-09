@@ -1,4 +1,4 @@
-# Piotroski F-Score: A Trading Strategy
+# Vale Investing: Piotroski F-Score
 
 Just a repository to calculate the Piotroski F-score based on the financial statements of publicly traded, high Book-to-Market firms. To find the F-score, you need information from the balance sheet, the income statement, and the statement of cash-flow. Piotroski argues that these statements contain information about the future earnings of a firm which may not be priced in adequately by the market.
 
