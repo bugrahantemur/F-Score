@@ -1,7 +1,7 @@
 def roa(company_data, year):
     return (
         company_data["Net income from continuing operations"][str(year)]
-        - company_data["Total assets"][str(year - 1)]
+        / company_data["Total assets"][str(year - 1)]
     )
 
 
