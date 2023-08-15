@@ -1,14 +1,14 @@
 def roa(company_data, year):
     return (
-        company_data["Net income from continuing operations"][str(year)]
-        / company_data["Total assets"][str(year - 1)]
+        company_data["NetIncomeFromContinuingOps_" + str(year)]
+        / company_data["TotalAssets_" + str(year - 1)]
     )
 
 
 def cfo(company_data, year):
     return (
-        company_data["Net cash from operating activities"][str(year)]
-        / company_data["Total assets"][str(year - 1)]
+        company_data["NetCashFromOperatingActivities_" + str(year)]
+        / company_data["TotalAssets_" + str(year - 1)]
     )
 
 
@@ -26,12 +26,12 @@ def accrual(company_data, year):
 
 def average_total_assets(company_data, year):
     return 0.5 * (
-        company_data["Total assets"][str(year)] + company_data["Total assets"][str(year - 1)]
+        company_data["TotalAssets_" + str(year)] + company_data["TotalAssets_" + str(year - 1)]
     )
 
 
 def leverage(company_data, year, average_total_assets_in_year):
-    return company_data["Long-term debt"][str(year)] / average_total_assets_in_year
+    return company_data["LongTermDebt_" + str(year)] / average_total_assets_in_year
 
 
 def delta_leverage(company_data, year):
@@ -47,7 +47,9 @@ def delta_leverage(company_data, year):
 
 
 def current_ratio(company_data, year):
-    return company_data["Current assets"][str(year)] / company_data["Current liabilites"][str(year)]
+    return (
+        company_data["CurrentAssets_" + str(year)] / company_data["CurrentLiabilities_" + str(year)]
+    )
 
 
 def delta_liquidity(company_data, year):
@@ -60,13 +62,13 @@ def delta_liquidity(company_data, year):
 
 def eq_offer(company_data, year):
     return (
-        company_data["Shares outstanding"][str(year)]
-        - company_data["Shares outstanding"][str(year - 1)]
+        company_data["SharesOutstanding_" + str(year)]
+        - company_data["SharesOutstanding_" + str(year - 1)]
     )
 
 
 def margin_ratio(company_data, year):
-    return company_data["Gross margin"][str(year)] / company_data["Total assets"][str(year - 1)]
+    return company_data["GrossMargin_" + str(year)] / company_data["TotalAssets_" + str(year - 1)]
 
 
 def delta_margin(company_data, year):
@@ -78,7 +80,7 @@ def delta_margin(company_data, year):
 
 
 def turnover(company_data, year):
-    return company_data["Net sales"][str(year)] / company_data["Total assets"][str(year - 1)]
+    return company_data["NetSales_" + str(year)] / company_data["TotalAssets_" + str(year - 1)]
 
 
 def delta_turnover(company_data, year):

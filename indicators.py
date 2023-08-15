@@ -1,3 +1,16 @@
+IDS = [
+    "F_ROA",
+    "F_CFO",
+    "F_D_ROA",
+    "F_ACC",
+    "F_D_LEV",
+    "F_D_LIQ",
+    "F_EQ_OFFER",
+    "F_D_MARGIN",
+    "F_D_TURN",
+]
+
+
 # Profitability indicators
 
 # These indicator provide information about a firm's ability to generate earnings from operations.
