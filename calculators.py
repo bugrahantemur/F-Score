@@ -78,7 +78,7 @@ def delta_margin(company_data, year):
 
 
 def turnover(company_data, year):
-    return company_data["Gross margin"][str(year)] / company_data["Total assets"][str(year - 1)]
+    return company_data["Net sales"][str(year)] / company_data["Total assets"][str(year - 1)]
 
 
 def delta_turnover(company_data, year):
