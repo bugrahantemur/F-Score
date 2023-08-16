@@ -44,8 +44,8 @@ def test_delta_liquidity_score():
 
 
 def test_eq_offer_scoree():
-    assert indicators.eq_offer_score(True) == 1
-    assert indicators.eq_offer_score(False) == 0
+    assert indicators.eq_offer_score(False) == 1
+    assert indicators.eq_offer_score(True) == 0
 
 
 # Efficiency indicators

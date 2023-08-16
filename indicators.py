@@ -140,7 +140,7 @@ def eq_offer_score(eq_offer):
     Returns:
         int: Acquired score (1 or 0).
     """
-    return 1 if eq_offer else 0
+    return 0 if eq_offer else 1
 
 
 # Efficiency indicators
