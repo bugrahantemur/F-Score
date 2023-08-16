@@ -1,18 +1,5 @@
-IDS = [
-    "F_ROA",
-    "F_CFO",
-    "F_D_ROA",
-    "F_ACC",
-    "F_D_LEV",
-    "F_D_LIQ",
-    "F_EQ_OFFER",
-    "F_D_MARGIN",
-    "F_D_TURN",
-]
-
-
 # Profitability indicators
-
+#
 # These indicator provide information about a firm's ability to generate earnings from operations.
 
 
@@ -90,7 +77,7 @@ def accrual_score(accrual):
 
 
 # Capital structure indicators
-
+#
 # These indicators provide information about a firm's changes in capital structure and its ability
 # to meet future debt service obligations.
 
@@ -157,7 +144,7 @@ def eq_offer_score(eq_offer):
 
 
 # Efficiency indicators
-
+#
 # These indicators measure the changes in the efficiency of a firm's operations.
 
 
