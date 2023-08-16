@@ -3,7 +3,7 @@ from fscore import f_score
 
 if __name__ == "__main__":
     # Read the data as csv and create a pandas DataFrame
-    data = pd.read_csv("./data/company_data.csv", index_col=0)
+    data = pd.read_csv("./data/fundamentals.csv", index_col=0)
 
     # Set the year of calculation for Piotroski F-Score
     year = 2022
