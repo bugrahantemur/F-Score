@@ -1,9 +1,43 @@
+#
+# Some calculation routines used in more than one place in the indicator functions
+#
+
+
+def calculate_roa(data, year):
+    return data["NetIncomeFromContinuingOps_" + str(year)] / data["TotalAssets_" + str(year - 1)]
+
+
+def calculate_cfo(data, year):
+    return (
+        data["NetCashFromOperatingActivities_" + str(year)] / data["TotalAssets_" + str(year - 1)]
+    )
+
+
+def calculate_current_ratio(data, year):
+    return data["CurrentAssets_" + str(year)] / data["CurrentLiabilities_" + str(year)]
+
+
+def calculate_margin_ratio(data, year):
+    return data["GrossMargin_" + str(year)] / data["TotalAssets_" + str(year - 1)]
+
+
+def calculate_turnover(data, year):
+    return data["NetSales_" + str(year)] / data["TotalAssets_" + str(year - 1)]
+
+
+def calculate_leverage(data, year):
+    average_total_assets = 0.5 * (
+        data["TotalAssets_" + str(year)] + data["TotalAssets_" + str(year - 1)]
+    )
+    return data["LongTermDebt_" + str(year)] / average_total_assets
+
+
 # Profitability indicators
 #
 # These indicator provide information about a firm's ability to generate earnings from operations.
 
 
-def roa_score(roa):
+def roa_score(data, year):
     """
     Returns the F-score contribution of the return on assets (roa) indicator.
 
@@ -13,15 +47,18 @@ def roa_score(roa):
     A positive roa is considered a positive signal for a firm's profitability.
 
     Args:
-        roa (float): Return on assets.
+        data (Series): Data frame with fundamental information of companies.
+        year (int): Year to calculate the indicator.
 
     Returns:
-        int: Acquired score (1 or 0).
+        list[int]: Acquired score for every firm (1 or 0).
     """
-    return 1 if roa > 0.0 else 0
+    roas = calculate_roa(data, year)
+
+    return [1 if roa > 0.0 else 0 for roa in roas]
 
 
-def cfo_score(cfo):
+def cfo_score(data, year):
     """
     Returns the F-score contribution of the cash-flow from operations (cfo) indicator.
 
@@ -31,15 +68,18 @@ def cfo_score(cfo):
     A positive cfo is considered a positive signal for a firm's profitability.
 
     Args:
-        cfo (float): Cash-flow from operations.
+        data (Series): Data frame with fundamental information of firms.
+        year (int): Year to calculate the indicator.
 
     Returns:
-        int: Acquired score (1 or 0).
+        list[int]: Acquired score for every firm (1 or 0).
     """
-    return 1 if cfo > 0.0 else 0
+    cfos = calculate_cfo(data, year)
+
+    return [1 if cfo > 0.0 else 0 for cfo in cfos]
 
 
-def delta_roa_score(delta_roa):
+def delta_roa_score(data, year):
     """
     Returns the F-score contribution of the change in return on assets (delta_roa) indicator.
 
@@ -49,15 +89,20 @@ def delta_roa_score(delta_roa):
     profitability.
 
     Args:
-        delta_roa (float): Change in return on assets.
+        data (Series): Data frame with fundamental information of companies.
+        year (int): Year to calculate the indicator.
 
     Returns:
-        int: Acquired score (1 or 0).
+        list[int]: Acquired score for every firm (1 or 0).
     """
-    return 1 if delta_roa > 0.0 else 0
+    roas_current = calculate_roa(data, year)
+    roas_prev = calculate_roa(data, year - 1)
+    delta_roas = roas_current - roas_prev
+
+    return [1 if delta_roa > 0.0 else 0 for delta_roa in delta_roas]
 
 
-def accrual_score(accrual):
+def accrual_score(data, year):
     """
     Returns the F-score contribution of the accrual indicator.
 
@@ -67,13 +112,18 @@ def accrual_score(accrual):
     A positive accrual is considered a bad signal about a firm's future profitability and returns
     (Sloan,1996).
 
-    Args:
-        accrual (float): Accrual value.
+     Args:
+        data (Series): Data frame with fundamental information of companies.
+        year (int): Year to calculate the indicator.
 
     Returns:
-        int: Acquired score (1 or 0).
+        list[int]: Acquired score for every firm (1 or 0).
     """
-    return 1 if accrual < 0.0 else 0
+    roas = calculate_roa(data, year)
+    cfos = calculate_cfo(data, year)
+    accruals = roas - cfos
+
+    return [1 if accrual < 0.0 else 0 for accrual in accruals]
 
 
 # Capital structure indicators
@@ -82,7 +132,7 @@ def accrual_score(accrual):
 # to meet future debt service obligations.
 
 
-def delta_leverage_score(delta_leverage):
+def delta_leverage_score(data, year):
     """
     Returns the F-score contribution of the delta_leverage indicator.
 
@@ -92,16 +142,21 @@ def delta_leverage_score(delta_leverage):
     For a distressed firm, raising external debt signals an inability to generate funds internally.
     So, a positive delta_leverage is considered a bad signal for the firm.
 
-    Args:
-        delta_leverage (float): Change in the debt-to-assets ratio.
+     Args:
+        data (Series): Data frame with fundamental information of companies.
+        year (int): Year to calculate the indicator.
 
     Returns:
-        int: Acquired score (1 or 0).
+        list[int]: Acquired score for every firm (1 or 0).
     """
-    return 1 if delta_leverage < 0.0 else 0
+    leverages_current = calculate_leverage(data, year)
+    leverages_prev = calculate_leverage(data, year - 1)
+    delta_leverages = leverages_current - leverages_prev
+
+    return [1 if delta_leverage < 0.0 else 0 for delta_leverage in delta_leverages]
 
 
-def delta_liquidity_score(delta_current_ratio):
+def delta_liquidity_score(data, year):
     """
     Returns the F-score contribution of the delta_current_ratio (a.k.a. delta_liquid) indicator.
 
@@ -114,33 +169,41 @@ def delta_liquidity_score(delta_current_ratio):
     improvement in liquidity and a positive signal about a firm's ability to meet short-term
     obligations.
 
-    Args:
-        delta_current_ratio (float): Change in the current ratio.
+     Args:
+        data (Series): Data frame with fundamental information of companies.
+        year (int): Year to calculate the indicator.
 
     Returns:
-        int: Acquired score (1 or 0).
+        list[int]: Acquired score for every firm (1 or 0).
     """
-    return 1 if delta_current_ratio > 0.0 else 0
+    current_ratios_current = calculate_current_ratio(data, year)
+    current_ratios_prev = calculate_current_ratio(data, year - 1)
+    delta_current_ratios = current_ratios_current - current_ratios_prev
+
+    return [1 if delta_current_ratio < 0.0 else 0 for delta_current_ratio in delta_current_ratios]
 
 
-def eq_offer_score(eq_offer):
+def eq_offer_score(data, year):
     """
     Returns the F-score contribution of the eq_offer indicator.
 
-    The boolean eq_offer is a variable capturing if a firm issued common
-    equity in the year until portfolio formation.
+    eq_offer is a variable capturing if a firm issued common equity. It is calculated as the
+    difference in the number of shares outstanding of the firm (i.e. delta_shares_outstanding).
 
     For a distressed firm, just like raising long-term debt, raising external capital from
-    investors signals an inability to generate funds internally. So, eq_offer == True is considered
-    a bad signal for the firm.
+    investors signals an inability to generate funds internally. So, a positive eq_offer is
+    considered a bad signal for the firm.
 
     Args:
-        eq_offer (bool): Boolean indicating if common equity was offered.
+        data (Series): Data frame with fundamental information of companies.
+        year (int): Year to calculate the indicator.
 
     Returns:
-        int: Acquired score (1 or 0).
+        list[int]: Acquired score for every firm (1 or 0).
     """
-    return 0 if eq_offer else 1
+    eq_offers = data["SharesOutstanding_" + str(year)] - data["SharesOutstanding_" + str(year - 1)]
+
+    return [0 if eq_offer > 0 else 1 for eq_offer in eq_offers]
 
 
 # Efficiency indicators
@@ -148,7 +211,7 @@ def eq_offer_score(eq_offer):
 # These indicators measure the changes in the efficiency of a firm's operations.
 
 
-def delta_margin_score(delta_margin):
+def delta_margin_score(data, year):
     """
     Returns the F-score contribution of the delta_margin indicator.
 
@@ -158,15 +221,20 @@ def delta_margin_score(delta_margin):
     firm's operations, hence considered a good signal.
 
     Args:
-        delta_margin (bool): Change in the gross margin ratio.
+        data (Series): Data frame with fundamental information of companies.
+        year (int): Year to calculate the indicator.
 
     Returns:
-        int: Acquired score (1 or 0).
+        list[int]: Acquired score for every firm (1 or 0).
     """
-    return 1 if delta_margin > 0.0 else 0
+    margins_current = calculate_margin_ratio(data, year)
+    margins_prev = calculate_margin_ratio(data, year - 1)
+    delta_margins = margins_current - margins_prev
+
+    return [1 if delta_margin > 0.0 else 0 for delta_margin in delta_margins]
 
 
-def delta_turnover_score(delta_turnover):
+def delta_turnover_score(data, year):
     """
     Returns the F-score contribution of the delta_turnover indicator.
 
@@ -176,9 +244,14 @@ def delta_turnover_score(delta_turnover):
     from a firm's asset base, hence considered a good signal.
 
     Args:
-        delta_turnover (bool): Change in the gross margin ratio.
+        data (Series): Data frame with fundamental information of companies.
+        year (int): Year to calculate the indicator.
 
     Returns:
-        int: Acquired score (1 or 0).
+        list[int]: Acquired score for every firm (1 or 0).
     """
-    return 1 if delta_turnover > 0.0 else 0
+    turnovers_current = calculate_turnover(data, year)
+    turnovers_prev = calculate_turnover(data, year - 1)
+    delta_turnovers = turnovers_current - turnovers_prev
+
+    return [1 if delta_turnover > 0.0 else 0 for delta_turnover in delta_turnovers]
