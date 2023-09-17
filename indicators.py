@@ -180,7 +180,7 @@ def delta_liquidity_score(data, year):
     current_ratios_prev = calculate_current_ratio(data, year - 1)
     delta_current_ratios = current_ratios_current - current_ratios_prev
 
-    return [1 if delta_current_ratio < 0.0 else 0 for delta_current_ratio in delta_current_ratios]
+    return [1 if delta_current_ratio > 0.0 else 0 for delta_current_ratio in delta_current_ratios]
 
 
 def eq_offer_score(data, year):
