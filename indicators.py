@@ -1,5 +1,5 @@
 #
-# Some calculation routines used in more than one place in the indicator functions
+# Abbreviations for the column names that should be found in the data
 #
 
 cols = {
@@ -13,6 +13,10 @@ cols = {
     "LD": "LongTermDebt_",
     "SO": "SharesOutstanding_",
 }
+
+#
+# Some calculation routines used in more than one place in the indicator functions
+#
 
 
 def calculate_roa(data, year):
