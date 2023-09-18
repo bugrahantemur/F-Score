@@ -2,34 +2,46 @@
 # Some calculation routines used in more than one place in the indicator functions
 #
 
+cols = {
+    "IO": "NetIncomeFromContinuingOps_",
+    "TA": "TotalAssets_",
+    "CO": "NetCashFromOperatingActivities_",
+    "CA": "CurrentAssets_",
+    "CL": "CurrentLiabilities_",
+    "GM": "GrossMargin_",
+    "NS": "NetSales_",
+    "LD": "LongTermDebt_",
+    "SO": "SharesOutstanding_",
+}
+
 
 def calculate_roa(data, year):
-    return data["NetIncomeFromContinuingOps_" + str(year)] / data["TotalAssets_" + str(year - 1)]
+    return data[cols["IO"] + str(year)] / data[cols["TA"] + str(year - 1)]
 
 
 def calculate_cfo(data, year):
-    return (
-        data["NetCashFromOperatingActivities_" + str(year)] / data["TotalAssets_" + str(year - 1)]
-    )
+    return data[cols["CO"] + str(year)] / data[cols["TA"] + str(year - 1)]
 
 
 def calculate_current_ratio(data, year):
-    return data["CurrentAssets_" + str(year)] / data["CurrentLiabilities_" + str(year)]
+    return data[cols["CA"] + str(year)] / data[cols["CL"] + str(year)]
 
 
 def calculate_margin_ratio(data, year):
-    return data["GrossMargin_" + str(year)] / data["TotalAssets_" + str(year - 1)]
+    return data[cols["GM"] + str(year)] / data[cols["TA"] + str(year - 1)]
 
 
 def calculate_turnover(data, year):
-    return data["NetSales_" + str(year)] / data["TotalAssets_" + str(year - 1)]
+    return data[cols["NS"] + str(year)] / data[cols["TA"] + str(year - 1)]
 
 
 def calculate_leverage(data, year):
-    average_total_assets = 0.5 * (
-        data["TotalAssets_" + str(year)] + data["TotalAssets_" + str(year - 1)]
-    )
-    return data["LongTermDebt_" + str(year)] / average_total_assets
+    average_total_assets = 0.5 * (data[cols["TA"] + str(year)] + data[cols["TA"] + str(year - 1)])
+    return data[cols["LD"] + str(year)] / average_total_assets
+
+
+def calculate_shares_outstanding(data, year):
+    return data[cols["SO"] + str(year)]
 
 
 # Profitability indicators
@@ -201,7 +213,9 @@ def eq_offer_score(data, year):
     Returns:
         list[int]: Acquired score for every firm (1 or 0).
     """
-    eq_offers = data["SharesOutstanding_" + str(year)] - data["SharesOutstanding_" + str(year - 1)]
+    shares_outstanding_current = calculate_shares_outstanding(data, year)
+    shares_outstanding_prev = calculate_shares_outstanding(data, year - 1)
+    eq_offers = shares_outstanding_current - shares_outstanding_prev
 
     return [0 if eq_offer > 0 else 1 for eq_offer in eq_offers]
 
